@@ -2,8 +2,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// Must match the GitHub Pages repo subpath exactly, including trailing slash.
-const BASE_PATH = '/Loan-ScoreCalculator/'
+// GitHub Pages serves this app from a /<repo-name>/ subpath; every other
+// deploy target (Cloudflare Workers, etc.) serves it from the domain root.
+const BASE_PATH = process.env.DEPLOY_TARGET === 'github-pages' ? '/Loan-ScoreCalculator/' : '/'
 
 export default defineConfig({
   base: BASE_PATH,
