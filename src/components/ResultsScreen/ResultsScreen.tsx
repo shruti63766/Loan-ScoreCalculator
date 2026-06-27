@@ -1,7 +1,9 @@
 import type { LoanInputs, LoanResult } from '../../engine'
+import { formatINR } from '../../format'
 import { ApprovalBadge } from '../ApprovalBadge/ApprovalBadge'
+import { ReferenceTable } from '../ReferenceTable/ReferenceTable'
+import { ScoreExplorer } from '../ScoreExplorer/ScoreExplorer'
 import { ScoreTable } from '../ScoreTable/ScoreTable'
-import { SuggestionsList } from '../SuggestionsList/SuggestionsList'
 import styles from './ResultsScreen.module.css'
 
 interface Props {
@@ -16,7 +18,7 @@ export function ResultsScreen({ inputs, result, onRecalculate }: Props) {
       <div className={styles.emiBanner}>
         <span className={styles.emiLabel}>EMI Proposed</span>
         <span className={styles.emiValue}>
-          Rs. {Math.round(result.emi).toLocaleString('en-IN')}
+          {formatINR(result.emi)}
           <span className={styles.emiSuffix}>/month</span>
         </span>
       </div>
@@ -25,7 +27,9 @@ export function ResultsScreen({ inputs, result, onRecalculate }: Props) {
 
       <ScoreTable categories={result.breakdown.categories} total={result.total} />
 
-      {!result.approved && <SuggestionsList suggestions={result.suggestions} original={inputs} />}
+      <ScoreExplorer inputs={inputs} suggestions={result.suggestions} />
+
+      <ReferenceTable />
 
       <button type="button" className={styles.backBtn} onClick={onRecalculate}>
         Recalculate

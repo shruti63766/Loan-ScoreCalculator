@@ -12,4 +12,6 @@ export function computeResult(inputs: LoanInputs): LoanResult {
 
 export { APPROVAL_THRESHOLD } from './constants'
 export { EMPLOYMENT_SCORES } from './constants'
+export { SCORECARD_REFERENCE } from './referenceTable'
+export type { ReferenceCategory, ReferenceRow } from './referenceTable'
 export type { CategoryKey, CategoryResult, EmploymentType, LoanInputs, LoanResult, Suggestion } from './types'
