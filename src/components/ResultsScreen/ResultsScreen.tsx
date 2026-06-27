@@ -7,14 +7,21 @@ import { ScoreTable } from '../ScoreTable/ScoreTable'
 import styles from './ResultsScreen.module.css'
 
 interface Props {
+  customerName: string
+  mobileNumber: string
   inputs: LoanInputs
   result: LoanResult
   onRecalculate: () => void
 }
 
-export function ResultsScreen({ inputs, result, onRecalculate }: Props) {
+export function ResultsScreen({ customerName, mobileNumber, inputs, result, onRecalculate }: Props) {
   return (
     <div className={styles.wrapper}>
+      <div className={styles.customerBar}>
+        <span className={styles.customerName}>{customerName}</span>
+        <span className={styles.customerMobile}>{mobileNumber}</span>
+      </div>
+
       <div className={styles.emiBanner}>
         <span className={styles.emiLabel}>EMI Proposed</span>
         <span className={styles.emiValue}>

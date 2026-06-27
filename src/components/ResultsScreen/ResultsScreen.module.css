@@ -4,6 +4,30 @@
   gap: 16px;
 }
 
+.customerBar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.customerName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.customerMobile {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
 .emiBanner {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   border-radius: var(--radius-lg);

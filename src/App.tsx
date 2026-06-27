@@ -16,7 +16,12 @@ function getInitialTheme(): Theme {
 
 function App() {
   const [draft, setDraft] = useState<LoanFormDraft>(EMPTY_DRAFT)
-  const [submitted, setSubmitted] = useState<{ inputs: LoanInputs; result: LoanResult } | null>(null)
+  const [submitted, setSubmitted] = useState<{
+    customerName: string
+    mobileNumber: string
+    inputs: LoanInputs
+    result: LoanResult
+  } | null>(null)
   const [theme, setTheme] = useState<Theme>(getInitialTheme)
 
   const toggleTheme = () => {
@@ -89,6 +94,8 @@ function App() {
       <main className={styles.main}>
         {submitted ? (
           <ResultsScreen
+            customerName={submitted.customerName}
+            mobileNumber={submitted.mobileNumber}
             inputs={submitted.inputs}
             result={submitted.result}
             onRecalculate={() => setSubmitted(null)}
@@ -97,7 +104,14 @@ function App() {
           <LoanForm
             draft={draft}
             onChange={setDraft}
-            onSubmit={(inputs) => setSubmitted({ inputs, result: computeResult(inputs) })}
+            onSubmit={(inputs) =>
+              setSubmitted({
+                customerName: draft.customerName,
+                mobileNumber: draft.mobileNumber,
+                inputs,
+                result: computeResult(inputs),
+              })
+            }
           />
         )}
       </main>

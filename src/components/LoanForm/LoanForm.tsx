@@ -4,6 +4,8 @@ import { EMPLOYMENT_SCORES } from '../../engine'
 import styles from './LoanForm.module.css'
 
 export interface LoanFormDraft {
+  customerName: string
+  mobileNumber: string
   cibilScore: string
   isNtc: boolean
   employment: EmploymentType
@@ -19,6 +21,8 @@ export interface LoanFormDraft {
 }
 
 export const EMPTY_DRAFT: LoanFormDraft = {
+  customerName: '',
+  mobileNumber: '',
   cibilScore: '',
   isNtc: false,
   employment: 'PVT_SECTOR_SALARIED',
@@ -54,6 +58,7 @@ function toInputs(draft: LoanFormDraft): LoanInputs {
 const EMPLOYMENT_OPTIONS = Object.entries(EMPLOYMENT_SCORES) as [EmploymentType, { score: number; label: string }][]
 
 const isBlank = (s: string): boolean => s.trim() === ''
+const isValidMobile = (s: string): boolean => /^\d{10}$/.test(s.trim())
 
 function FieldError({ message }: { message: string | null }) {
   if (!message) return null
@@ -75,6 +80,12 @@ export function LoanForm({ draft, onChange, onSubmit }: Props) {
     (Number(draft.exShowroomPrice) || 0) + (Number(draft.registrationCharge) || 0) + (Number(draft.insurance) || 0)
 
   const errors = {
+    customerName: isBlank(draft.customerName) ? 'Required' : null,
+    mobileNumber: isBlank(draft.mobileNumber)
+      ? 'Required'
+      : !isValidMobile(draft.mobileNumber)
+        ? 'Enter a valid 10-digit mobile number'
+        : null,
     cibil: !draft.isNtc && (isBlank(draft.cibilScore) || Number(draft.cibilScore) <= 0) ? 'Required' : null,
     exShowroom: isBlank(draft.exShowroomPrice) || Number(draft.exShowroomPrice) <= 0 ? 'Required' : null,
     registration: isBlank(draft.registrationCharge) ? 'Required' : null,
@@ -101,6 +112,39 @@ export function LoanForm({ draft, onChange, onSubmit }: Props) {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Customer Details</h2>
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="customerName">
+            Customer Name
+          </label>
+          <input
+            id="customerName"
+            className={inputClass(!!errors.customerName)}
+            type="text"
+            placeholder="e.g. Ramesh Kumar"
+            value={draft.customerName}
+            onChange={(e) => set('customerName', e.target.value)}
+          />
+          <FieldError message={showErrors ? errors.customerName : null} />
+        </div>
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="mobileNumber">
+            Mobile Number
+          </label>
+          <input
+            id="mobileNumber"
+            className={inputClass(!!errors.mobileNumber)}
+            type="tel"
+            inputMode="numeric"
+            placeholder="e.g. 9876543210"
+            value={draft.mobileNumber}
+            onChange={(e) => set('mobileNumber', e.target.value)}
+          />
+          <FieldError message={showErrors ? errors.mobileNumber : null} />
+        </div>
+      </section>
+
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Applicant</h2>
 
