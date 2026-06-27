@@ -36,7 +36,7 @@ function App() {
         const registrations = await navigator.serviceWorker.getRegistrations()
         await Promise.all(registrations.map((r) => r.unregister()))
       }
-      window.location.href = '/'
+      window.location.href = import.meta.env.BASE_URL
     }
   }
 
