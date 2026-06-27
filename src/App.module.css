@@ -15,10 +15,12 @@
 .topRow {
   display: flex;
   justify-content: flex-end;
+  gap: 8px;
   margin-bottom: 12px;
 }
 
-.themeToggle {
+.themeToggle,
+.logoutBtn {
   border: 1.5px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-text-muted);
@@ -32,6 +34,11 @@
 .themeToggle:hover {
   color: var(--color-text);
   border-color: var(--color-primary);
+}
+
+.logoutBtn:hover {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
 }
 
 .title {

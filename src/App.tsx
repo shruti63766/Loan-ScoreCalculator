@@ -24,10 +24,17 @@ function App() {
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#12141a' : '#2554c7')
   }
 
+  const logout = () => {
+    window.location.href = '/cdn-cgi/access/logout'
+  }
+
   return (
     <div className={styles.page}>
       <header className={styles.header}>
         <div className={styles.topRow}>
+          <button type="button" className={styles.logoutBtn} onClick={logout}>
+            Log out
+          </button>
           <button
             type="button"
             className={styles.themeToggle}
