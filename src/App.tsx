@@ -24,8 +24,20 @@ function App() {
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#12141a' : '#2554c7')
   }
 
-  const logout = () => {
-    window.location.href = '/cdn-cgi/access/logout'
+  const logout = async () => {
+    try {
+      // A plain fetch (not a full-page navigation) so the service worker's
+      // cached-navigation handling can't intercept it before it reaches the network.
+      await fetch('/cdn-cgi/access/logout', { credentials: 'include', cache: 'no-store' })
+    } finally {
+      // Force the next load to go to the network instead of the offline cache,
+      // so the cleared session is actually re-checked at Cloudflare's edge.
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations()
+        await Promise.all(registrations.map((r) => r.unregister()))
+      }
+      window.location.href = '/'
+    }
   }
 
   return (
