@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styles from './App.module.css'
 import { EMPTY_DRAFT, LoanForm, type LoanFormDraft } from './components/LoanForm/LoanForm'
 import { ResultsScreen } from './components/ResultsScreen/ResultsScreen'
 import { computeResult, type LoanInputs, type LoanResult } from './engine'
+
+const IDLE_LOGOUT_MS = 15 * 60 * 1000
+const ACTIVITY_EVENTS = ['mousedown', 'keydown', 'touchstart', 'scroll'] as const
 
 type Theme = 'light' | 'dark'
 
@@ -39,6 +42,29 @@ function App() {
       window.location.href = import.meta.env.BASE_URL
     }
   }
+
+  // Cloudflare Access's own session timer lives at the edge and this app never makes
+  // another network request after the initial load (fully offline-capable), so nothing
+  // ever re-checks it. Track idle time in-app instead and call logout() directly.
+  const logoutRef = useRef(logout)
+  logoutRef.current = logout
+
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>
+
+    const resetTimer = () => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => logoutRef.current(), IDLE_LOGOUT_MS)
+    }
+
+    for (const event of ACTIVITY_EVENTS) window.addEventListener(event, resetTimer)
+    resetTimer()
+
+    return () => {
+      clearTimeout(timeoutId)
+      for (const event of ACTIVITY_EVENTS) window.removeEventListener(event, resetTimer)
+    }
+  }, [])
 
   return (
     <div className={styles.page}>
