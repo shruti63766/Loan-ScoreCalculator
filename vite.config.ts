@@ -12,8 +12,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/favicon-32.png', 'icons/favicon-48.png', 'icons/apple-touch-icon.png'],
       manifest: {
-        name: 'Car Loan Score Calculator',
-        short_name: 'Loan Score',
+        name: 'WheelScore',
+        short_name: 'WheelScore',
         description: 'Bank-internal car loan scorecard calculator',
         start_url: BASE_PATH,
         scope: BASE_PATH,

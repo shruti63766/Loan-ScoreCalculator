@@ -87,8 +87,8 @@ function App() {
             {theme === 'dark' ? 'Light mode' : 'Dark mode'}
           </button>
         </div>
-        <h1 className={styles.title}>Car Loan Score Calculator</h1>
-        <p className={styles.subtitle}>Annexure-I &middot; Revised Car Loan Score Card (RSM)</p>
+        <h1 className={styles.title}>WheelScore</h1>
+        <p className={styles.subtitle}>Shruti Gupta</p>
       </header>
 
       <main className={styles.main}>
