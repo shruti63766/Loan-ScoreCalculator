@@ -23,7 +23,7 @@ export function ResultsScreen({ inputs, result, onRecalculate }: Props) {
         </span>
       </div>
 
-      <ApprovalBadge total={result.total} approved={result.approved} />
+      <ApprovalBadge total={result.total} approved={result.approved} eligibility={result.eligibility} />
 
       <ScoreTable categories={result.breakdown.categories} total={result.total} />
 

@@ -1,5 +1,12 @@
 import { useMemo, useState } from 'react'
-import { computeResult, type LoanInputs, type Suggestion } from '../../engine'
+import {
+  computeResult,
+  getMaxTenureMonths,
+  LOAN_AMOUNT_ABS_MIN,
+  TENURE_ELIGIBLE_MIN_MONTHS,
+  type LoanInputs,
+  type Suggestion,
+} from '../../engine'
 import { formatINR } from '../../format'
 import styles from './ScoreExplorer.module.css'
 
@@ -10,12 +17,13 @@ interface Range {
 }
 
 function loanAmountRange(original: number): Range {
-  const min = Math.max(0, Math.round((original * 0.1) / 1000) * 1000)
-  return { min: Math.min(min, original), max: original, step: 1000 }
+  return { min: Math.min(LOAN_AMOUNT_ABS_MIN, original), max: original, step: 1000 }
 }
 
-function tenureRange(original: number): Range {
-  return { min: Math.min(6, original), max: Math.max(96, original), step: 1 }
+function tenureRange(original: number, age: number): Range {
+  const min = TENURE_ELIGIBLE_MIN_MONTHS
+  const max = getMaxTenureMonths(age)
+  return { min: Math.min(min, original), max: Math.max(max, original), step: 1 }
 }
 
 function nmiRange(original: number): Range {
@@ -48,7 +56,7 @@ export function ScoreExplorer({ inputs, suggestions }: Props) {
   }
 
   const loanRange = useMemo(() => loanAmountRange(inputs.loanAmount), [inputs.loanAmount])
-  const tenRange = useMemo(() => tenureRange(inputs.tenure), [inputs.tenure])
+  const tenRange = useMemo(() => tenureRange(inputs.tenure, inputs.age), [inputs.tenure, inputs.age])
   const nmiRangeVal = useMemo(() => nmiRange(inputs.nmi), [inputs.nmi])
 
   const live = useMemo(
@@ -99,6 +107,14 @@ export function ScoreExplorer({ inputs, suggestions }: Props) {
           </div>
         </div>
       </div>
+
+      {!live.eligibility.eligible && (
+        <ul className={styles.eligibilityReasons}>
+          {live.eligibility.reasons.map((reason) => (
+            <li key={reason}>{reason}</li>
+          ))}
+        </ul>
+      )}
 
       <div className={styles.slider}>
         <div className={styles.sliderLabelRow}>

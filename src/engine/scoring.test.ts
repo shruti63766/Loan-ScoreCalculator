@@ -119,7 +119,7 @@ describe('computeResult', () => {
     const strong: LoanInputs = {
       ...baseInputs,
       cibilScore: 810,
-      employment: 'GOVERNMENT_OR_PENSIONER',
+      employment: 'GOVERNMENT_EMPLOYEE',
       loanAmount: 3 * LAKH,
       tenure: 36,
       nmi: 150_000,
@@ -127,23 +127,42 @@ describe('computeResult', () => {
       age: 42,
     }
     const result = computeResult(strong)
+    expect(result.eligibility.eligible).toBe(true)
     expect(result.total).toBeGreaterThanOrEqual(41)
     expect(result.approved).toBe(true)
   })
 
-  it('a weak applicant falls below the threshold', () => {
+  it('a weak but still-eligible applicant falls below the threshold on points alone', () => {
     const weak: LoanInputs = {
       ...baseInputs,
-      cibilScore: 660,
+      cibilScore: 700,
       employment: 'BUSINESSMAN',
-      loanAmount: 20 * LAKH,
+      loanAmount: 7.9 * LAKH,
       tenure: 84,
       nmi: 40_000,
       hasCsp: false,
       age: 22,
     }
     const result = computeResult(weak)
+    expect(result.eligibility.eligible).toBe(true)
     expect(result.total).toBeLessThan(41)
+    expect(result.approved).toBe(false)
+  })
+
+  it('an ineligible applicant is never approved even with a high point total', () => {
+    const ineligible: LoanInputs = {
+      ...baseInputs,
+      cibilScore: 810,
+      employment: 'GOVERNMENT_EMPLOYEE',
+      loanAmount: 3 * LAKH,
+      tenure: 36,
+      nmi: 150_000,
+      hasCsp: true,
+      age: 80, // outside the 21-70 eligible range
+    }
+    const result = computeResult(ineligible)
+    expect(result.total).toBeGreaterThanOrEqual(41)
+    expect(result.eligibility.eligible).toBe(false)
     expect(result.approved).toBe(false)
   })
 })

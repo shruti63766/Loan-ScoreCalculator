@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { EmploymentType, LoanInputs } from '../../engine'
 import { EMPLOYMENT_SCORES } from '../../engine'
 import styles from './LoanForm.module.css'
@@ -52,6 +53,13 @@ function toInputs(draft: LoanFormDraft): LoanInputs {
 
 const EMPLOYMENT_OPTIONS = Object.entries(EMPLOYMENT_SCORES) as [EmploymentType, { score: number; label: string }][]
 
+const isBlank = (s: string): boolean => s.trim() === ''
+
+function FieldError({ message }: { message: string | null }) {
+  if (!message) return null
+  return <span className={styles.errorText}>{message}</span>
+}
+
 interface Props {
   draft: LoanFormDraft
   onChange: (draft: LoanFormDraft) => void
@@ -59,23 +67,35 @@ interface Props {
 }
 
 export function LoanForm({ draft, onChange, onSubmit }: Props) {
+  const [submitAttempted, setSubmitAttempted] = useState(false)
+
   const set = <K extends keyof LoanFormDraft>(key: K, value: LoanFormDraft[K]) => onChange({ ...draft, [key]: value })
 
   const valueOfCar =
     (Number(draft.exShowroomPrice) || 0) + (Number(draft.registrationCharge) || 0) + (Number(draft.insurance) || 0)
 
-  const isValid =
-    (draft.isNtc || Number(draft.cibilScore) > 0) &&
-    valueOfCar > 0 &&
-    Number(draft.loanAmount) > 0 &&
-    Number(draft.tenure) > 0 &&
-    Number(draft.nmi) > 0 &&
-    Number(draft.rateOfInterest) >= 0 &&
-    Number(draft.age) > 0
+  const errors = {
+    cibil: !draft.isNtc && (isBlank(draft.cibilScore) || Number(draft.cibilScore) <= 0) ? 'Required' : null,
+    exShowroom: isBlank(draft.exShowroomPrice) || Number(draft.exShowroomPrice) <= 0 ? 'Required' : null,
+    registration: isBlank(draft.registrationCharge) ? 'Required' : null,
+    insurance: isBlank(draft.insurance) ? 'Required' : null,
+    loanAmount: isBlank(draft.loanAmount) || Number(draft.loanAmount) <= 0 ? 'Required' : null,
+    tenure: isBlank(draft.tenure) || Number(draft.tenure) <= 0 ? 'Required' : null,
+    rate: isBlank(draft.rateOfInterest) ? 'Required' : null,
+    nmi: isBlank(draft.nmi) || Number(draft.nmi) <= 0 ? 'Required' : null,
+    age: isBlank(draft.age) || Number(draft.age) <= 0 ? 'Required' : null,
+  }
+  const isValid = Object.values(errors).every((e) => e === null)
+  const showErrors = submitAttempted
+
+  const inputClass = (hasError: boolean) => `${styles.input} ${showErrors && hasError ? styles.inputError : ''}`
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!isValid) return
+    if (!isValid) {
+      setSubmitAttempted(true)
+      return
+    }
     onSubmit(toInputs(draft))
   }
 
@@ -91,7 +111,7 @@ export function LoanForm({ draft, onChange, onSubmit }: Props) {
           <div className={styles.cibilRow}>
             <input
               id="cibil"
-              className={styles.input}
+              className={inputClass(!!errors.cibil)}
               type="number"
               inputMode="numeric"
               placeholder="e.g. 760"
@@ -108,6 +128,7 @@ export function LoanForm({ draft, onChange, onSubmit }: Props) {
               NTC (New to Credit)
             </label>
           </div>
+          <FieldError message={showErrors ? errors.cibil : null} />
         </div>
 
         <div className={styles.field}>
@@ -135,13 +156,14 @@ export function LoanForm({ draft, onChange, onSubmit }: Props) {
             </label>
             <input
               id="age"
-              className={styles.input}
+              className={inputClass(!!errors.age)}
               type="number"
               inputMode="numeric"
               placeholder="e.g. 34"
               value={draft.age}
               onChange={(e) => set('age', e.target.value)}
             />
+            <FieldError message={showErrors ? errors.age : null} />
           </div>
 
           <div className={styles.field}>
@@ -175,13 +197,14 @@ export function LoanForm({ draft, onChange, onSubmit }: Props) {
             </label>
             <input
               id="exShowroom"
-              className={styles.input}
+              className={inputClass(!!errors.exShowroom)}
               type="number"
               inputMode="numeric"
               placeholder="0"
               value={draft.exShowroomPrice}
               onChange={(e) => set('exShowroomPrice', e.target.value)}
             />
+            <FieldError message={showErrors ? errors.exShowroom : null} />
           </div>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="registration">
@@ -189,13 +212,14 @@ export function LoanForm({ draft, onChange, onSubmit }: Props) {
             </label>
             <input
               id="registration"
-              className={styles.input}
+              className={inputClass(!!errors.registration)}
               type="number"
               inputMode="numeric"
               placeholder="0"
               value={draft.registrationCharge}
               onChange={(e) => set('registrationCharge', e.target.value)}
             />
+            <FieldError message={showErrors ? errors.registration : null} />
           </div>
         </div>
         <div className={styles.field}>
@@ -204,13 +228,14 @@ export function LoanForm({ draft, onChange, onSubmit }: Props) {
           </label>
           <input
             id="insurance"
-            className={styles.input}
+            className={inputClass(!!errors.insurance)}
             type="number"
             inputMode="numeric"
             placeholder="0"
             value={draft.insurance}
             onChange={(e) => set('insurance', e.target.value)}
           />
+          <FieldError message={showErrors ? errors.insurance : null} />
         </div>
         {valueOfCar > 0 && (
           <p className={styles.computedHint}>Value of car: <strong>Rs. {valueOfCar.toLocaleString('en-IN')}</strong></p>
@@ -225,13 +250,14 @@ export function LoanForm({ draft, onChange, onSubmit }: Props) {
           </label>
           <input
             id="loanAmount"
-            className={styles.input}
+            className={inputClass(!!errors.loanAmount)}
             type="number"
             inputMode="numeric"
             placeholder="e.g. 600000"
             value={draft.loanAmount}
             onChange={(e) => set('loanAmount', e.target.value)}
           />
+          <FieldError message={showErrors ? errors.loanAmount : null} />
         </div>
         <div className={styles.row}>
           <div className={styles.field}>
@@ -240,13 +266,14 @@ export function LoanForm({ draft, onChange, onSubmit }: Props) {
             </label>
             <input
               id="tenure"
-              className={styles.input}
+              className={inputClass(!!errors.tenure)}
               type="number"
               inputMode="numeric"
               placeholder="e.g. 60"
               value={draft.tenure}
               onChange={(e) => set('tenure', e.target.value)}
             />
+            <FieldError message={showErrors ? errors.tenure : null} />
           </div>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="rate">
@@ -254,7 +281,7 @@ export function LoanForm({ draft, onChange, onSubmit }: Props) {
             </label>
             <input
               id="rate"
-              className={styles.input}
+              className={inputClass(!!errors.rate)}
               type="number"
               inputMode="decimal"
               step="0.01"
@@ -262,6 +289,7 @@ export function LoanForm({ draft, onChange, onSubmit }: Props) {
               value={draft.rateOfInterest}
               onChange={(e) => set('rateOfInterest', e.target.value)}
             />
+            <FieldError message={showErrors ? errors.rate : null} />
           </div>
         </div>
         <div className={styles.field}>
@@ -270,17 +298,22 @@ export function LoanForm({ draft, onChange, onSubmit }: Props) {
           </label>
           <input
             id="nmi"
-            className={styles.input}
+            className={inputClass(!!errors.nmi)}
             type="number"
             inputMode="numeric"
             placeholder="e.g. 80000"
             value={draft.nmi}
             onChange={(e) => set('nmi', e.target.value)}
           />
+          <FieldError message={showErrors ? errors.nmi : null} />
         </div>
       </section>
 
-      <button type="submit" className={styles.submitBtn} disabled={!isValid}>
+      {showErrors && !isValid && (
+        <p className={styles.formError}>Please fill in all required fields above.</p>
+      )}
+
+      <button type="submit" className={styles.submitBtn}>
         Calculate Score
       </button>
     </form>

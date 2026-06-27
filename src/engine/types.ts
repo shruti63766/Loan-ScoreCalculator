@@ -1,9 +1,11 @@
 export type EmploymentType =
-  | 'GOVERNMENT_OR_PENSIONER'
+  | 'GOVERNMENT_EMPLOYEE'
+  | 'PENSIONER'
   | 'PVT_SECTOR_SALARIED'
   | 'PROFESSIONAL'
-  | 'OTHERS_INCL_AGRICULTURIST'
   | 'BUSINESSMAN'
+  | 'OTHERS'
+  | 'AGRICULTURIST'
 
 export interface LoanInputs {
   /** CIBIL score, ignored when isNtc is true */
@@ -48,6 +50,11 @@ export interface ScoreBreakdown {
   total: number
 }
 
+export interface EligibilityResult {
+  eligible: boolean
+  reasons: string[]
+}
+
 export interface LoanResult {
   emi: number
   valueOfCar: number
@@ -55,6 +62,8 @@ export interface LoanResult {
   emiNmiPercent: number
   breakdown: ScoreBreakdown
   total: number
+  eligibility: EligibilityResult
+  /** eligibility.eligible && total >= APPROVAL_THRESHOLD */
   approved: boolean
   suggestions: Suggestion[]
 }

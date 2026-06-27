@@ -29,6 +29,7 @@ import {
   resolveBand,
 } from './constants'
 import { calculateEmiNmiRatio, calculateLTV, calculateValueOfCar } from './derived'
+import { checkEligibility } from './eligibility'
 import { calculateEMI } from './emi'
 import type { CategoryResult, LoanInputs, LoanResult, ScoreBreakdown } from './types'
 
@@ -38,10 +39,7 @@ export function scoreCibil(cibilScore: number, isNtc: boolean): number {
   return resolveBand(CIBIL_BANDS, cibilScore).score
 }
 
-export function computeScoreBreakdown(inputs: LoanInputs, valueOfCar: number, emi: number): ScoreBreakdown {
-  const ltvPercent = calculateLTV(inputs.loanAmount, valueOfCar)
-  const emiNmiPercent = calculateEmiNmiRatio(emi, inputs.nmi)
-
+export function computeScoreBreakdown(inputs: LoanInputs, ltvPercent: number, emiNmiPercent: number): ScoreBreakdown {
   const categories: CategoryResult[] = [
     {
       key: 'cibil',
@@ -105,19 +103,24 @@ export function computeScoreBreakdown(inputs: LoanInputs, valueOfCar: number, em
   return { categories, total }
 }
 
-/** The single pipeline inputs -> EMI -> derived % -> score breakdown -> total. */
+/** The single pipeline inputs -> EMI -> derived % -> score breakdown + eligibility -> total. */
 export function computeResult(inputs: LoanInputs): Omit<LoanResult, 'suggestions'> {
   const valueOfCar = calculateValueOfCar(inputs.exShowroomPrice, inputs.registrationCharge, inputs.insurance)
   const emi = calculateEMI(inputs.loanAmount, inputs.rateOfInterest, inputs.tenure)
-  const breakdown = computeScoreBreakdown(inputs, valueOfCar, emi)
+  const ltvPercent = calculateLTV(inputs.loanAmount, valueOfCar)
+  const emiNmiPercent = calculateEmiNmiRatio(emi, inputs.nmi)
+
+  const breakdown = computeScoreBreakdown(inputs, ltvPercent, emiNmiPercent)
+  const eligibility = checkEligibility(inputs, { valueOfCar, ltvPercent, emiNmiPercent })
 
   return {
     emi,
     valueOfCar,
-    ltvPercent: calculateLTV(inputs.loanAmount, valueOfCar),
-    emiNmiPercent: calculateEmiNmiRatio(emi, inputs.nmi),
+    ltvPercent,
+    emiNmiPercent,
     breakdown,
     total: breakdown.total,
-    approved: breakdown.total >= APPROVAL_THRESHOLD,
+    eligibility,
+    approved: eligibility.eligible && breakdown.total >= APPROVAL_THRESHOLD,
   }
 }
