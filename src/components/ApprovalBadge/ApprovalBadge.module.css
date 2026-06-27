@@ -1,0 +1,67 @@
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  border: 1px solid;
+}
+
+.approved {
+  background: var(--color-success-bg);
+  border-color: var(--color-success-border);
+}
+
+.rejected {
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger-border);
+}
+
+.scoreCircle {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.scoreNumber {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.approved .scoreNumber {
+  color: var(--color-success);
+}
+
+.rejected .scoreNumber {
+  color: var(--color-danger);
+}
+
+.scoreOutOf {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.status {
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.approved .status {
+  color: var(--color-success);
+}
+
+.rejected .status {
+  color: var(--color-danger);
+}
+
+.detail {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}

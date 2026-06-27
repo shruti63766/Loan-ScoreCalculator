@@ -1,0 +1,92 @@
+.wrapper {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table thead th {
+  text-align: center;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.paramHeader {
+  text-align: left !important;
+}
+
+.table tbody tr:not(:last-child) td {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table td {
+  padding: 11px 10px;
+}
+
+.paramCell {
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.numCell {
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.pill {
+  display: inline-flex;
+  min-width: 28px;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.strong {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.medium {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.weak {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.neutral {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.table tfoot td {
+  padding: 13px 10px;
+  background: var(--color-bg);
+  font-weight: 800;
+}
+
+.totalPill {
+  display: inline-flex;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  font-weight: 800;
+  font-size: 14px;
+}
