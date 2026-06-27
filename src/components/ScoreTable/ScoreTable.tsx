@@ -21,8 +21,8 @@ export function ScoreTable({ categories, total }: Props) {
         <thead>
           <tr>
             <th className={styles.paramHeader}>Parameter</th>
-            <th>Min</th>
             <th>Max</th>
+            <th>Min</th>
             <th>Achieved</th>
           </tr>
         </thead>
@@ -30,8 +30,8 @@ export function ScoreTable({ categories, total }: Props) {
           {categories.map((c) => (
             <tr key={c.key}>
               <td className={styles.paramCell}>{c.label}</td>
-              <td className={styles.numCell}>{c.min}</td>
               <td className={styles.numCell}>{c.max}</td>
+              <td className={styles.numCell}>{c.min}</td>
               <td className={styles.numCell}>
                 <span className={`${styles.pill} ${strengthClass(c.achieved, c.min, c.max)}`}>{c.achieved}</span>
               </td>
@@ -41,8 +41,8 @@ export function ScoreTable({ categories, total }: Props) {
         <tfoot>
           <tr>
             <td className={styles.paramCell}>Total</td>
-            <td className={styles.numCell}>—</td>
             <td className={styles.numCell}>100</td>
+            <td className={styles.numCell}>—</td>
             <td className={styles.numCell}>
               <span className={styles.totalPill}>{total}</span>
             </td>

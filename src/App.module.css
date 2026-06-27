@@ -8,8 +8,30 @@
 }
 
 .header {
-  padding: 28px 20px 18px;
+  padding: 16px 20px 18px;
   text-align: center;
+}
+
+.topRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.themeToggle {
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.themeToggle:hover {
+  color: var(--color-text);
+  border-color: var(--color-primary);
 }
 
 .title {
