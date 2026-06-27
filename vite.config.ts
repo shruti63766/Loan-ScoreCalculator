@@ -32,6 +32,9 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,webmanifest}'],
         cleanupOutdatedCaches: true,
+        // Cloudflare's reserved /cdn-cgi/ paths (e.g. Access logout) must hit the
+        // network directly, never the cached app-shell navigation fallback.
+        navigateFallbackDenylist: [/^\/cdn-cgi\//],
       },
     }),
   ],
