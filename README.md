@@ -6,8 +6,9 @@ approval threshold of 41, suggests ranked combinations of Loan Amount / Tenure /
 Income changes that would clear it.
 
 Runs entirely client-side as an installable PWA (Android & iPhone, via "Add to Home Screen") —
-no backend, no database, no login, no AI. See [reference/car-loan-scorecard.jpeg](reference/car-loan-scorecard.jpeg)
-for the source scorecard.
+no backend, no database, no AI. Access is gated by Cloudflare Access (email one-time PIN,
+restricted to a single allowed address) rather than any app-level auth. See
+[reference/car-loan-scorecard.jpeg](reference/car-loan-scorecard.jpeg) for the source scorecard.
 
 ## Development
 
@@ -24,8 +25,8 @@ React-free TypeScript — see its unit tests for the full set of band boundaries
 
 ## Deployment
 
-Pushes to `main` build and deploy to GitHub Pages automatically via
-[.github/workflows/deploy.yml](.github/workflows/deploy.yml). The Pages source must be set to
-"GitHub Actions" once in the repo's Settings → Pages.
-
-`vite.config.ts`'s `base` must match the repo's GitHub Pages subpath exactly.
+Hosted on Cloudflare (Workers with static assets), connected directly to this GitHub repo.
+Pushes to `main` build and deploy automatically via Cloudflare's own git integration — no
+GitHub Actions involved. Build config lives in [wrangler.jsonc](wrangler.jsonc); access control
+(email one-time PIN, single allowed address, 30-minute session) is configured in the Cloudflare
+Zero Trust dashboard under Access controls → Applications, not in this repo.
